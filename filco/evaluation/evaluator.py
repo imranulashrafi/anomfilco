@@ -1,6 +1,5 @@
 import time
 
-import numpy as np
 import torch
 import torch.distributed as dist
 from tqdm import tqdm
@@ -43,7 +42,7 @@ def evaluate_reward_at_1(
     log(f"  [{label}]  {len(problems)} problems (greedy completions)")
     t0 = time.perf_counter()
 
-    prompts = [format_prompt(p, tokenizer, cfg.model_type, cfg.task_type) for p in problems]
+    prompts = [format_prompt(p, tokenizer, cfg.model_type) for p in problems]
     instructions = [p["prompt"] for p in problems]
 
     completions = backend.generate_greedy(prompts, cfg.eval_max_new_tokens)

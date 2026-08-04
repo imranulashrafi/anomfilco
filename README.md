@@ -49,7 +49,7 @@ command line or with `--config path/to/your.yaml`.
 
 | Flag | Default | Meaning |
 | --- | --- | --- |
-| `--n_vote` | 32 | candidates sampled per prompt |
+| `--n_candidates` | 32 | candidates sampled per prompt |
 | `--gate_pct` | 95.0 | degeneracy percentile above which candidates are discarded |
 | `--suffix_words` / `--prefix_words` | 30 / 30 | window used to score degeneracy |
 | `--rejected_strategy` | `lowest_centrality_all` | how the negative is chosen |
@@ -70,10 +70,10 @@ alone, which is the ablation baseline.
 experiments, each 500 prompts in the format the loader expects:
 
 ```json
-{"prompt": "...", "chosen": "...", "rejected": "..."}
+{"prompt": "..."}
 ```
 
-Only `prompt` is used for training. Any JSON file with that field works.
+Any JSON list of objects with a `prompt` field works. Other keys are ignored.
 
 ## Layout
 

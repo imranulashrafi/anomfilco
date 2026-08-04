@@ -6,9 +6,9 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel as DDP
 
 try:
-    from bitsandbytes.optim import AdamW8bit
+    import bitsandbytes  # noqa: F401
     _BNB_AVAILABLE = True
-except ImportError:
+except (ImportError, OSError):
     _BNB_AVAILABLE = False
 
 LOCAL_RANK = int(os.environ.get("LOCAL_RANK", 0))

@@ -1,8 +1,7 @@
 model_name: Qwen/Qwen2.5-7B
 data_path: data/ultrafeedback_binarized_500.json
-task_type: open
 
-n_vote: 32
+n_candidates: 32
 temperature: 0.7
 top_p: 0.95
 max_new_tokens: 4096

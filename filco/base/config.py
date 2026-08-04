@@ -1,4 +1,3 @@
-import os
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -14,7 +13,7 @@ class BaseConfig:
 
     data_path: str = "data/MATH-TTT/train.json"
 
-    n_vote: int = 32
+    n_candidates: int = 32
     temperature: float = 0.7
     top_p: float = 0.95
     max_new_tokens: int = 3072
@@ -59,9 +58,6 @@ class BaseConfig:
 
     seed: int = 42
 
-
-    task_type: str = "math"
-
     sglang_ports: list = field(default_factory=list)
     sglang_device_groups: list = field(default_factory=list)
 
@@ -88,9 +84,8 @@ class BaseConfig:
 @dataclass
 class FilcoConfig(BaseConfig):
     method: str = "filco"
-    task_type: str = "open"
 
-    n_vote: int = 32
+    n_candidates: int = 32
     temperature: float = 0.7
     top_p: float = 0.95
     max_new_tokens: int = 4096

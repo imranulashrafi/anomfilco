@@ -1,7 +1,6 @@
 import datetime
 import json
 import logging
-import os
 from typing import Optional
 
 from filco.utils.distributed import IS_RANK0
@@ -45,10 +44,9 @@ def sample_log_gen(idx: int, total: int, output: str):
     if not IS_RANK0:
         return
     from tqdm import tqdm
-    boxed = "✅" if "\\boxed" in (output or "") else "❌"
     words = len((output or "").split())
-    tqdm.write(f"🔎 gen {idx}/{total}  📦 boxed:{boxed}  📏 ~{words}w")
-    tqdm.write(f"   ◀ {_preview(output)}")
+    tqdm.write(f"gen {idx}/{total}  ~{words}w")
+    tqdm.write(f"   {_preview(output)}")
 
 
 def _setup_log_file(log_path: str):

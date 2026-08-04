@@ -7,7 +7,7 @@ class GenerationBackend(ABC):
     def generate_phase1(
         self,
         prompts: list,
-        n_vote: int,
+        n_candidates: int,
         greedy_sampling: dict,
         sample_sampling: dict,
     ) -> tuple:
@@ -23,10 +23,4 @@ class GenerationBackend(ABC):
 
     @abstractmethod
     def shutdown(self) -> None:
-        pass
-
-    def pause(self) -> None:
-        pass
-
-    def resume(self) -> None:
         pass

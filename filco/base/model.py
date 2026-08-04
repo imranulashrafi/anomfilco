@@ -73,7 +73,7 @@ def load_model_and_tokenizer(cfg, model_path: str = None):
     return model, tokenizer
 
 
-def wrap_model_for_training(model, cfg):
+def wrap_model_for_training(model):
     device = torch.device(f"cuda:{LOCAL_RANK}")
     if WORLD_SIZE <= 1:
         return model.to(device)
@@ -94,7 +94,7 @@ def create_optimizer(model, cfg):
     return torch.optim.AdamW(params, lr=cfg.learning_rate)
 
 
-def save_model_checkpoint(model, tokenizer, path: str, cfg):
+def save_model_checkpoint(model, tokenizer, path: str):
     os.makedirs(path, exist_ok=True)
     raw = get_raw_model(model)
     if _PEFT_AVAILABLE and isinstance(raw, PeftModel):

@@ -1,6 +1,5 @@
 import requests
 
-from filco.logging.logger import log
 
 
 def _parse_sglang_output(out, want_logprobs: bool) -> tuple:

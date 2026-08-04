@@ -22,7 +22,7 @@ class SGLangBackend(GenerationBackend):
     def generate_phase1(
         self,
         prompts: list,
-        n_vote: int,
+        n_candidates: int,
         greedy_sampling: dict,
         sample_sampling: dict,
     ) -> tuple:
@@ -30,8 +30,8 @@ class SGLangBackend(GenerationBackend):
         n = len(prompts)
 
         greedy_outs = [""] * n
-        sample_outs = [[""] * n_vote for _ in range(n)]
-        sample_lps = [[[] for _ in range(n_vote)] for _ in range(n)]
+        sample_outs = [[""] * n_candidates for _ in range(n)]
+        sample_lps = [[[] for _ in range(n_candidates)] for _ in range(n)]
 
         with ThreadPoolExecutor(max_workers=max(len(urls), 4)) as pool:
             gfutures = {
@@ -44,7 +44,7 @@ class SGLangBackend(GenerationBackend):
             sfutures = {
                 pool.submit(
                     _generate_from_one_server,
-                    urls[i % len(urls)], pt, n_vote, sample_sampling, True,
+                    urls[i % len(urls)], pt, n_candidates, sample_sampling, True,
                 ): ("s", i)
                 for i, pt in enumerate(prompts)
             }
@@ -67,16 +67,16 @@ class SGLangBackend(GenerationBackend):
                     texts, lps = fut.result()
                 except Exception as e:
                     log(f"  SGLang gen failed ({tag}) problem {idx + 1}: {e}")
-                    texts = [""] * (1 if tag == "g" else n_vote)
-                    lps = [[]] * (1 if tag == "g" else n_vote)
+                    texts = [""] * (1 if tag == "g" else n_candidates)
+                    lps = [[]] * (1 if tag == "g" else n_candidates)
                 if tag == "g":
                     greedy_outs[idx] = texts[0] if texts else ""
                     seen += 1
                     if verbose and seen % every == 0:
                         sample_log_gen(seen, n, greedy_outs[idx])
                 else:
-                    sample_outs[idx] = (texts + [""] * n_vote)[:n_vote]
-                    sample_lps[idx] = (lps + [[]] * n_vote)[:n_vote]
+                    sample_outs[idx] = (texts + [""] * n_candidates)[:n_candidates]
+                    sample_lps[idx] = (lps + [[]] * n_candidates)[:n_candidates]
 
         return greedy_outs, sample_outs, sample_lps
 

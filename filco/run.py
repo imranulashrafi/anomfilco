@@ -31,7 +31,7 @@ def _build_parser() -> argparse.ArgumentParser:
     p.add_argument("--model_name", default=None)
     p.add_argument("--model_type", default=None)
     p.add_argument("--data_path", default=None)
-    p.add_argument("--n_vote", type=int, default=None)
+    p.add_argument("--n_candidates", type=int, default=None)
     p.add_argument("--temperature", type=float, default=None)
     p.add_argument("--top_p", type=float, default=None)
     p.add_argument("--max_new_tokens", type=int, default=None)
@@ -131,7 +131,7 @@ def main():
     cfg = build_config(merged)
 
     print(f"[filco] model={cfg.model_name}  episodes={cfg.num_episodes}  "
-          f"n_vote={cfg.n_vote}  lr={cfg.learning_rate}")
+          f"n_candidates={cfg.n_candidates}  lr={cfg.learning_rate}")
 
     FilcoTrainer(cfg).train()
 

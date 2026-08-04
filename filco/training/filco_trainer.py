@@ -3,14 +3,14 @@ import pickle
 from typing import Optional
 
 import numpy as np
+import torch
 
 from filco.base.selection import _gate_survivors, compute_sample_predinfo, select_pair
 from filco.base.semantic import Encoder, centrality_from_embeddings
 from filco.logging.logger import FilcoEpisodeDiagnostics, log
 from filco.training.base_trainer import BaseTrainer
 from filco.training.filco_losses import simpo_loss
-from filco.utils.distributed import IS_RANK0, LOCAL_RANK
-from filco.utils.distributed import get_raw_model
+from filco.utils.distributed import IS_RANK0, LOCAL_RANK, get_raw_model
 
 
 class FilcoTrainer(BaseTrainer):
@@ -56,7 +56,6 @@ class FilcoTrainer(BaseTrainer):
         )
         if not cfg.eval_subset_size or not getattr(cfg, "reward_eval_enabled", True):
             return
-        import torch
         from transformers import AutoModelForSequenceClassification, AutoTokenizer
         rdev = getattr(cfg, "reward_device", "") or ""
         if rdev:
@@ -79,8 +78,6 @@ class FilcoTrainer(BaseTrainer):
     def _augment_episode_data(self, ep_data: list, cfg):
         if not IS_RANK0 or self._encoder is None:
             return
-        import torch
-
         raw = get_raw_model(self._model)
         was_training = raw.training
         raw.eval()
@@ -184,11 +181,9 @@ class FilcoTrainer(BaseTrainer):
             "episode": episode,
             "instructions": [eval_problems[i]["prompt"] for i in range(n)],
             "completions": comps[:n],
-            "gold_chosen": [eval_problems[i].get("chosen", "") for i in range(n)],
-            "gold_rejected": [eval_problems[i].get("rejected", "") for i in range(n)],
             "mean_reward": eval_result.get("mean_reward", 0.0),
         }
         out = os.path.join(cfg.output_dir, f"episode_{episode}_eval_completions.pkl")
         with open(out, "wb") as f:
             pickle.dump(payload, f)
-        log(f"  Saved eval completions for offline judge: {out}")
+        log(f"  Saved eval completions: {out}")

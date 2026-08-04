@@ -98,14 +98,14 @@ class BaseTrainer:
 
     def _run_phase1(self, episode: int, problems: list, tok_gen, cfg):
         log(f"\n{'─'*60}\n  PHASE 1: GENERATION (greedy + samples w/ logprobs)\n{'─'*60}")
-        all_prompts = [format_prompt(p, tok_gen, cfg.model_type, cfg.task_type) for p in problems]
+        all_prompts = [format_prompt(p, tok_gen, cfg.model_type) for p in problems]
 
         greedy_sampling = {"temperature": 0.0, "top_p": 1.0, "max_new_tokens": cfg.eval_max_new_tokens}
         sample_sampling = {"temperature": cfg.temperature, "top_p": cfg.top_p,
                            "max_new_tokens": cfg.max_new_tokens}
 
         greedy_out, sample_out, sample_lps = self._backend.generate_phase1(
-            all_prompts, cfg.n_vote, greedy_sampling, sample_sampling
+            all_prompts, cfg.n_candidates, greedy_sampling, sample_sampling
         )
 
         ep_data = [
@@ -113,7 +113,6 @@ class BaseTrainer:
                 "problem_idx": i + 1,
                 "prompt": problems[i]["prompt"],
                 "prompt_text": all_prompts[i],
-                "answer": problems[i].get("answer", ""),
                 "greedy_completion": greedy_out[i],
                 "sample_completions": sample_out[i],
                 "sample_logprobs": sample_lps[i],
@@ -134,7 +133,7 @@ class BaseTrainer:
             f"  Backend      : SGLANG"
             f"  devices=[{cfg.sglang_devices}]\n"
             f"  Problems     : {n_problems}  |  eval: {n_eval}\n"
-            f"  Episodes     : {cfg.num_episodes}  |  n_vote: {cfg.n_vote}"
+            f"  Episodes     : {cfg.num_episodes}  |  n_candidates: {cfg.n_candidates}"
             f"  |  temp: {cfg.temperature}\n"
             f"  LR           : {cfg.learning_rate}  |  warmup: {warmup_steps} steps\n"
             f"  Grad accum   : {cfg.gradient_accumulation_steps}"
@@ -219,7 +218,7 @@ class BaseTrainer:
         model, tok = load_model_and_tokenizer(
             cfg, model_path=resume_ckpt
         )
-        model = wrap_model_for_training(model, cfg)
+        model = wrap_model_for_training(model)
         optimizer = create_optimizer(model, cfg)
         scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_steps, total_steps)
 
@@ -376,7 +375,7 @@ class BaseTrainer:
             ckpt_path = os.path.join(cfg.output_dir, f"checkpoint_ep{episode}")
             if IS_RANK0:
                 _cleanup_old_checkpoints(cfg.output_dir, episode, cfg.keep_last_n_checkpoints)
-            save_model_checkpoint(model, tok, ckpt_path, cfg)
+            save_model_checkpoint(model, tok, ckpt_path)
 
             if WORLD_SIZE > 1:
                 dist.barrier()
@@ -419,7 +418,7 @@ class BaseTrainer:
             final_path = os.path.join(cfg.output_dir, "final_model")
             if IS_RANK0:
                 _cleanup_old_checkpoints(cfg.output_dir, cfg.num_episodes + 1, 1)
-            save_model_checkpoint(model, tok, final_path, cfg)
+            save_model_checkpoint(model, tok, final_path)
 
         if IS_RANK0 and self._backend:
             self._backend.shutdown()
