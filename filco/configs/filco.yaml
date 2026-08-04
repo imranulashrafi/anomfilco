@@ -1,0 +1,40 @@
+model_name: Qwen/Qwen2.5-7B
+data_path: data/ultrafeedback_binarized_500.json
+task_type: open
+
+n_vote: 32
+temperature: 0.7
+top_p: 0.95
+max_new_tokens: 4096
+eval_max_new_tokens: 4096
+
+num_episodes: 15
+learning_rate: 8.0e-7
+warmup_ratio: 0.03
+gradient_accumulation_steps: 8
+use_8bit_adam: true
+gradient_checkpointing: true
+
+simpo_beta: 2.0
+simpo_gamma: 0.5
+
+gate_pct: 95.0
+suffix_words: 30
+prefix_words: 30
+rejected_strategy: lowest_centrality_all
+min_target_word_length: 20
+
+encoder_name: Alibaba-NLP/gte-large-en-v1.5
+encoder_max_tokens: 4096
+encoder_batch_size: 4
+encoder_pooling: mean
+
+reward_model_name: Skywork/Skywork-Reward-Llama-3.1-8B-v0.2
+reward_model_type: skywork
+reward_model_cpu: true
+reward_eval_enabled: true
+eval_subset_size: 200
+save_eval_completions: true
+
+sglang_devices: "1"
+sglang_mem_fraction: 0.80

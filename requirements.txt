@@ -1,0 +1,5 @@
+sglang[all]==0.5.2
+bitsandbytes>=0.43
+sentence-transformers>=3
+peft>=0.12
+torchao>=0.17
