@@ -50,19 +50,16 @@ command line or with `--config path/to/your.yaml`.
 | Flag | Default | Meaning |
 | --- | --- | --- |
 | `--n_candidates` | 32 | candidates sampled per prompt |
-| `--gate_pct` | 95.0 | degeneracy percentile above which candidates are discarded |
+| `--gate_pct` | 90.0 | degeneracy percentile above which candidates are discarded |
 | `--suffix_words` / `--prefix_words` | 30 / 30 | window used to score degeneracy |
 | `--rejected_strategy` | `lowest_centrality_all` | how the negative is chosen |
 | `--simpo_beta` / `--simpo_gamma` | 2.0 / 0.5 | SimPO loss parameters |
 | `--encoder_name` | `Alibaba-NLP/gte-large-en-v1.5` | sentence encoder for consensus |
-| `--num_episodes` | 15 | training episodes |
-| `--learning_rate` | 8e-7 | |
+| `--num_episodes` | 5 | training episodes |
+| `--learning_rate` | 1e-7 | |
 | `--use_lora` / `--no_lora` | full fine-tuning | LoRA instead of full fine-tuning |
 | `--reward_model_name` | Skywork-Reward-Llama-3.1-8B-v0.2 | held-out model for per-episode reward |
 | `--no_reward_eval` | off | skip the per-episode reward evaluation |
-
-Setting `--gate_pct 100` disables the degeneracy filter and selects on consensus
-alone, which is the ablation baseline.
 
 ## Data
 
@@ -79,7 +76,7 @@ Any JSON list of objects with a `prompt` field works. Other keys are ignored.
 
 ```
 filco/
-  run.py                  entry point
+  run.py      entry point
   base/       config, data loading, model setup, encoder, pair selection
   training/   SimPO loss and the episode training loop
   generation/ SGLang backend
