@@ -7,7 +7,7 @@ top_p: 0.95
 max_new_tokens: 4096
 eval_max_new_tokens: 4096
 
-num_episodes: 15
+num_episodes: 5
 learning_rate: 8.0e-7
 warmup_ratio: 0.03
 gradient_accumulation_steps: 8
@@ -17,7 +17,7 @@ gradient_checkpointing: true
 simpo_beta: 2.0
 simpo_gamma: 0.5
 
-gate_pct: 95.0
+gate_pct: 90.0
 suffix_words: 30
 prefix_words: 30
 rejected_strategy: lowest_centrality_all
